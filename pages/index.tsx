@@ -62,7 +62,10 @@ export const SearchBox = ({
     <div className='mt-2 mb-2'>
       <Command
         value={currentRefinement}
-        onChange={(e) => refine(e.target.value)}
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement
+          refine(target.value)
+        }}
         filter={(value, search) => {
           console.log(value)
           console.log(search)
@@ -106,7 +109,10 @@ export const SearchBox = ({
       >
         <Command
           value={currentRefinement}
-          onChange={(e) => refine(e.target.value)}
+          onChange={(e) => {
+            const target = e.target as HTMLInputElement
+            refine(target.value)
+          }}
         >
           <Command.Input
             placeholder='Search for apps and commands...'
