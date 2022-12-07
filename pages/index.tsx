@@ -8,12 +8,12 @@ import { useEffect, useState } from 'react'
 
 const typesenseInstantSearchAdapter = new TypesenseInstantSearchAdapter({
   server: {
-    apiKey: process.env.NEXT_PUBLIC_API_KEY, // Be sure to use the search-only-api-key
+    apiKey: process.env.NEXT_PUBLIC_API_KEY!, // Be sure to use the search-only-api-key
     nodes: [
       {
-        host: process.env.NEXT_PUBLIC_HOST,
-        port: process.env.NEXT_PUBLIC_PORT,
-        protocol: process.env.NEXT_PUBLIC_PROTOCOL,
+        host: process.env.NEXT_PUBLIC_HOST!,
+        port: process.env.NEXT_PUBLIC_PORT!,
+        protocol: process.env.NEXT_PUBLIC_PROTOCOL!,
       },
     ],
   },
