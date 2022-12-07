@@ -12,7 +12,7 @@ const typesenseInstantSearchAdapter = new TypesenseInstantSearchAdapter({
     nodes: [
       {
         host: process.env.NEXT_PUBLIC_HOST!,
-        port: process.env.NEXT_PUBLIC_PORT!,
+        port: parseInt(process.env.NEXT_PUBLIC_PORT!),
         protocol: process.env.NEXT_PUBLIC_PROTOCOL!,
       },
     ],
