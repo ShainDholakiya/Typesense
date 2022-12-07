@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import TypesenseInstantSearchAdapter from 'typesense-instantsearch-adapter'
-import { InstantSearch } from 'react-instantsearch-dom'
+import { InstantSearch, Index } from 'react-instantsearch-dom'
 import { connectSearchBox, Hits } from 'react-instantsearch-dom'
 import { Command } from 'cmdk'
 import { useEffect, useState } from 'react'
@@ -159,10 +159,15 @@ export default function Home() {
           indexName='apps'
           searchClient={typesenseInstantSearchAdapter.searchClient}
         >
-          <div className=''>
-            <CustomSearchBox />
+          <CustomSearchBox />
+          <Index indexName='apps'>
+            <h2 className='mt-2'>index: apps</h2>
             <Hits hitComponent={Hit} />
-          </div>
+          </Index>
+          <Index indexName='DAOs'>
+            <h2 className='mt-2'>index: DAOs</h2>
+            <Hits hitComponent={Hit} />
+          </Index>
         </InstantSearch>
       </main>
 
