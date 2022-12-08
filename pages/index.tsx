@@ -1,8 +1,16 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import TypesenseInstantSearchAdapter from 'typesense-instantsearch-adapter'
-import { InstantSearch, Index } from 'react-instantsearch-dom'
-import { connectSearchBox, Hits } from 'react-instantsearch-dom'
+import {
+  InstantSearch,
+  Index,
+  RefinementList,
+  Hits,
+  Highlight,
+  connectSearchBox,
+  connectStateResults,
+  // SearchBox
+} from 'react-instantsearch-dom'
 import { Command } from 'cmdk'
 import { useEffect, useState } from 'react'
 
@@ -19,8 +27,14 @@ const typesenseInstantSearchAdapter = new TypesenseInstantSearchAdapter({
   },
   additionalSearchParameters: {
     query_by: 'name',
-    num_typos: 2,
+    num_typos: 1,
   },
+  // collectionSpecificSearchParameters: {
+  //   apps: {
+  //     query_by: 'name',
+  //     num_typos: 2,
+  //   },
+  // }
 })
 
 export const Hit = ({ hit }: { hit: any }) => {
@@ -29,8 +43,8 @@ export const Hit = ({ hit }: { hit: any }) => {
       <div className='w-1/3'>
         <img src={hit.logo} alt='logo' />
       </div>
-      <div className='w-2/3'>
-        <h1>{hit.name}</h1>
+      <div className='w-2/3 text-black'>
+        <Highlight attribute='name' hit={hit} tagName='strong' />
         <p>{hit.description}</p>
       </div>
     </div>
@@ -144,6 +158,55 @@ export const SearchBox = ({
   )
 }
 
+export const IndexResults = connectStateResults(
+  ({
+    searchState,
+    searchResults,
+    children,
+  }: {
+    searchState: any
+    searchResults: any
+    children: any
+  }) =>
+    searchResults && searchResults.nbHits !== 0 ? (
+      children
+    ) : (
+      <div>
+        No results have been found for {searchState.query} and index{' '}
+        {searchResults ? searchResults.index : ''}
+      </div>
+    )
+)
+
+export const AllResults = connectStateResults(
+  ({
+    allSearchResults,
+    children,
+  }: {
+    allSearchResults: any
+    children: any
+  }) => {
+    const hasResults =
+      allSearchResults &&
+      Object.values(allSearchResults).some((results) => results.nbHits > 0)
+    console.log(hasResults)
+    return !hasResults ? (
+      <div>
+        <div>No results in category, products or brand</div>
+        <Index indexName='apps' />
+        <Index indexName='DAOs' />
+      </div>
+    ) : (
+      children
+    )
+  }
+)
+
+const Results = connectStateResults(
+  ({ searchState, children }: { searchState: any; children: any }) =>
+    searchState && searchState.query ? children : <div>No query</div>
+)
+
 export default function Home() {
   const CustomSearchBox = connectSearchBox(SearchBox)
   return (
@@ -160,14 +223,22 @@ export default function Home() {
           searchClient={typesenseInstantSearchAdapter.searchClient}
         >
           <CustomSearchBox />
-          <Index indexName='apps'>
-            <h2 className='mt-2'>index: apps</h2>
-            <Hits hitComponent={Hit} />
-          </Index>
-          <Index indexName='DAOs'>
-            <h2 className='mt-2'>index: DAOs</h2>
-            <Hits hitComponent={Hit} />
-          </Index>
+          <Results>
+            <AllResults>
+              <Index indexName='apps'>
+                <IndexResults>
+                  <h2 className='mt-2'>index: apps</h2>
+                  <Hits hitComponent={Hit} />
+                </IndexResults>
+              </Index>
+              <Index indexName='DAOs'>
+                <IndexResults>
+                  <h2 className='mt-2'>index: DAOs</h2>
+                  <Hits hitComponent={Hit} />
+                </IndexResults>
+              </Index>
+            </AllResults>
+          </Results>
         </InstantSearch>
       </main>
 
