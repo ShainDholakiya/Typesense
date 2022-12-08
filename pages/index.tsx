@@ -128,8 +128,6 @@ export const CustomSearchBox = connectSearchBox(
                 shain.eth
               </Command.Item>
             </Command.Group>
-
-            {/* <Command.Item>Apple</Command.Item> */}
           </Command.List>
         </Command>
         <Command.Dialog
@@ -185,37 +183,45 @@ export const IndexResults = connectStateResults(
     searchState: any
     searchResults: any
     children: any
-  }) =>
-    searchResults && searchResults.nbHits !== 0 ? (
+  }) => {
+    console.log(searchResults)
+    return searchResults && searchResults.nbHits !== 0 ? (
       children
     ) : (
       <div>
-        No results have been found for {searchState.query} and index{' '}
+        No results have been found for {searchState.query} in index{' '}
         {searchResults ? searchResults.index : ''}
       </div>
     )
+  }
 )
 
 export const AllResults = connectStateResults(
   ({
+    searchState,
     allSearchResults,
     children,
   }: {
+    searchState: any
     allSearchResults: any
     children: any
   }) => {
-    const hasResults =
-      allSearchResults &&
-      Object.values(allSearchResults).some((results) => results.nbHits > 0)
-    return !hasResults ? (
-      <div>
-        <div>No results in category, products or brand</div>
-        <Index indexName='apps' />
-        <Index indexName='DAOs' />
-      </div>
-    ) : (
-      children
-    )
+    if (searchState && searchState.query) {
+      const hasResults =
+        allSearchResults &&
+        Object.values(allSearchResults).some(
+          (results: any) => results.nbHits > 0
+        )
+      return !hasResults ? (
+        <div>
+          <div>No results</div>
+          <Index indexName='apps' />
+          <Index indexName='DAOs' />
+        </div>
+      ) : (
+        children
+      )
+    }
   }
 )
 
@@ -239,16 +245,16 @@ export default function Home() {
           {/* <Results> */}
           <AllResults>
             <Index indexName='apps'>
-              <IndexResults>
-                {/* <h2 className='mt-2'>index: apps</h2> */}
-                <Hits hitComponent={Hit} />
-              </IndexResults>
+              {/* <IndexResults> */}
+              {/* <h2 className='mt-2'>index: apps</h2> */}
+              <Hits hitComponent={Hit} />
+              {/* </IndexResults> */}
             </Index>
             <Index indexName='DAOs'>
-              <IndexResults>
-                {/* <h2 className='mt-2'>index: DAOs</h2> */}
-                <Hits hitComponent={Hit} />
-              </IndexResults>
+              {/* <IndexResults> */}
+              {/* <h2 className='mt-2'>index: DAOs</h2> */}
+              <Hits hitComponent={Hit} />
+              {/* </IndexResults> */}
             </Index>
           </AllResults>
           {/* </Results> */}
